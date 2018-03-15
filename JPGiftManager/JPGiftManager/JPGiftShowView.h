@@ -12,13 +12,22 @@
 @class JPGiftModel;
 typedef void(^completeShowViewBlock)(BOOL finished,NSString *giftKey);
 
-typedef void(^completeShowViewKeyBlock)(NSString *giftKey);
+typedef void(^completeShowViewKeyBlock)(JPGiftModel *giftModel);
 
 @interface JPGiftShowView : UIView
 
+/**
+ 展示礼物动效
+
+ @param giftModel 礼物的数据
+ @param completeBlock 展示完毕回调
+ */
 - (void)showGiftShowViewWithModel:(JPGiftModel *)giftModel
                     completeBlock:(completeShowViewBlock)completeBlock;
 
+/**
+ 隐藏礼物
+ */
 - (void)hiddenGiftShowView;
 
 /** 背景 */
@@ -39,6 +48,7 @@ typedef void(^completeShowViewKeyBlock)(NSString *giftKey);
 @property(nonatomic,assign) NSInteger currentGiftCount;
 /** block */
 @property(nonatomic,copy)completeShowViewBlock showViewFinishBlock;
+/** 返回当前礼物的唯一key */
 @property(nonatomic,copy)completeShowViewKeyBlock showViewKeyBlock;
 /** model */
 @property(nonatomic,strong) JPGiftModel *finishModel;

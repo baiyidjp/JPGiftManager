@@ -11,16 +11,34 @@
 #import "JPGiftOperation.h"
 #import "JPGiftModel.h"
 
+//获取屏幕 宽度、高度
+#define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
+#define SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height)
+
+// 判断是否是iPhone X
+#define iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
+// 状态栏高度
+#define STATUS_BAR_HEIGHT (iPhoneX ? 44.f : 20.f)
+// 导航栏高度
+#define Nav_Bar_HEIGHT (iPhoneX ? 88.f : 64.f)
+// 导航+状态
+#define Nav_Status_Height (STATUS_BAR_HEIGHT+Nav_Bar_HEIGHT)
+// tabBar高度
+#define TAB_BAR_HEIGHT (iPhoneX ? (49.f+34.f) : 49.f)
+// home indicator
+#define HOME_INDICATOR_HEIGHT (iPhoneX ? 34.f : 0.f)
+//距离底部的间距
+#define Bottom_Margin(margin) ((margin)+HOME_INDICATOR_HEIGHT)
+
+
 @interface JPGiftShowManager()
 
 /** 队列 */
 @property(nonatomic,strong) NSOperationQueue *giftQueue;
 /** showgift */
 @property(nonatomic,strong) JPGiftShowView *giftShowView;
-/** 队列缓存 */
+/** 操作缓存 */
 @property (nonatomic,strong) NSCache *operationCache;
-/** 礼物缓存 */
-@property (nonatomic,strong) NSCache *userGigtInfos;
 
 @property(nonatomic,copy) completeBlock finishedBlock;
 /** 当前礼物的key */
@@ -42,10 +60,16 @@
 - (JPGiftShowView *)giftShowView{
     
     if (!_giftShowView) {
+        CGFloat itemW = SCREEN_WIDTH/4.0;
+        CGFloat itemH = itemW*125/110.0;
         
-        _giftShowView = [[JPGiftShowView alloc] initWithFrame:CGRectMake(-245, 200, 245, 50)];
-        [_giftShowView setShowViewKeyBlock:^(NSString *giftKey) {
-            self.curentGiftKey = giftKey;
+        __weak typeof(self) weakSelf = self;
+        _giftShowView = [[JPGiftShowView alloc] initWithFrame:CGRectMake(-245, SCREEN_HEIGHT-Bottom_Margin(44)-1-2*itemH-50-5, 245, 50)];
+        [_giftShowView setShowViewKeyBlock:^(JPGiftModel *giftModel) {
+            _curentGiftKey = giftModel.giftKey;
+            if (weakSelf.completeShowGifImageBlock) {
+                weakSelf.completeShowGifImageBlock(giftModel);
+            }
         }];
     }
     return _giftShowView;
@@ -59,14 +83,6 @@
     return _operationCache;
 }
 
-- (NSCache *)userGigtInfos {
-    if (_userGigtInfos == nil) {
-        _userGigtInfos = [[NSCache alloc] init];
-    }
-    return _userGigtInfos;
-}
-
-
 + (instancetype)sharedManager {
     
     static JPGiftShowManager *manager = nil;
@@ -77,38 +93,32 @@
     return manager;
 }
 
-- (void)showGiftViewWithBackView:(UIView *)backView info:(JPGiftModel *)giftModel completeBlock:(completeBlock)completeBlock {
+- (void)showGiftViewWithBackView:(UIView *)backView info:(JPGiftModel *)giftModel completeBlock:(completeBlock)completeBlock completeShowGifImageBlock:(completeShowGifImageBlock)completeShowGifImageBlock {
     
-    NSLog(@"当前key:%@",self.curentGiftKey);
-    NSLog(@"传来key:%@",giftModel.giftKey);
+    self.completeShowGifImageBlock = completeShowGifImageBlock;
+    
     if (self.curentGiftKey && [self.curentGiftKey isEqualToString:giftModel.giftKey]) {
         //有当前的礼物信息
         if ([self.operationCache objectForKey:giftModel.giftKey]) {
             //当前存在操作
             JPGiftOperation *op = [self.operationCache objectForKey:giftModel.giftKey];
             op.giftShowView.giftCount = giftModel.sendCount;
-            NSLog(@"111");
         }else {
             //当前操作已结束 重新创建
             JPGiftOperation *operation = [JPGiftOperation addOperationWithView:self.giftShowView OnView:backView Info:giftModel completeBlock:^(BOOL finished,NSString *giftKey) {
-                NSLog(@"执行完毕-%@",giftModel.giftName);
                 if (self.finishedBlock) {
                     self.finishedBlock(finished);
                 }
                 //移除操作
                 [self.operationCache removeObjectForKey:giftKey];
-                //移除礼物信息
-                [self.userGigtInfos removeObjectForKey:giftKey];
+                //清空唯一key
                 self.curentGiftKey = @"";
             }];
             operation.model.defaultCount += giftModel.sendCount;
             //存储操作信息
             [self.operationCache setObject:operation forKey:giftModel.giftKey];
-            //存储礼物信息
-            [self.userGigtInfos setObject:giftModel forKey:giftModel.giftKey];
             //操作加入队列
             [self.giftQueue addOperation:operation];
-            NSLog(@"222");
         }
 
     }else {
@@ -117,29 +127,22 @@
             //当前存在操作
             JPGiftOperation *op = [self.operationCache objectForKey:giftModel.giftKey];
             op.model.defaultCount += giftModel.sendCount;
-            NSLog(@"333");
         }else {
             
             JPGiftOperation *operation = [JPGiftOperation addOperationWithView:self.giftShowView OnView:backView Info:giftModel completeBlock:^(BOOL finished,NSString *giftKey) {
-                NSLog(@"执行完毕-%@",giftModel.giftName);
                 if (self.finishedBlock) {
                     self.finishedBlock(finished);
                 }
                 //移除操作
                 [self.operationCache removeObjectForKey:giftKey];
-                //移除礼物信息
-                [self.userGigtInfos removeObjectForKey:giftKey];
-                
+                //清空唯一key
                 self.curentGiftKey = @"";
             }];
             operation.model.defaultCount += giftModel.sendCount;
             //存储操作信息
             [self.operationCache setObject:operation forKey:giftModel.giftKey];
-            //存储礼物信息
-            [self.userGigtInfos setObject:giftModel forKey:giftModel.giftKey];
             //操作加入队列
             [self.giftQueue addOperation:operation];
-            NSLog(@"444");
         }
     }
 }

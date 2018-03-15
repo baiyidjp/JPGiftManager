@@ -9,7 +9,7 @@
 #import "JPGiftView.h"
 #import "JPGiftCollectionViewCell.h"
 #import "JPGiftCellModel.h"
-
+#import "JPHorizontalLayout.h"
 
 //获取屏幕 宽度、高度
 #define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
@@ -30,9 +30,6 @@
 //距离底部的间距
 #define Bottom_Margin(margin) ((margin)+HOME_INDICATOR_HEIGHT)
 
-#define CLColor(r, g, b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1.0]
-#define CLRandomColor CLColor(arc4random_uniform(256), arc4random_uniform(256), arc4random_uniform(256))
-
 static NSString *cellID = @"JPGiftCollectionViewCell";
 
 @interface JPGiftView()<UICollectionViewDelegate,UICollectionViewDataSource>
@@ -44,6 +41,11 @@ static NSString *cellID = @"JPGiftCollectionViewCell";
 @property(nonatomic,strong) UILabel *ccbLabel;
 /** 上一次点击的model */
 @property(nonatomic,strong) JPGiftCellModel *preModel;
+/** pagecontro */
+@property(nonatomic,strong) UIPageControl *pageControl;
+/** money */
+@property(nonatomic,strong) UILabel *moneyLabel;
+
 @end
 
 @implementation JPGiftView
@@ -71,6 +73,32 @@ static NSString *cellID = @"JPGiftCollectionViewCell";
     [self addSubview:bottomView];
     self.bottomView = bottomView;
     
+    self.pageControl = [[UIPageControl alloc]initWithFrame: CGRectMake(CGRectGetWidth(bottomView.frame)*0.5-15, 0, 30, CGRectGetHeight(bottomView.frame))];
+    self.pageControl.currentPageIndicatorTintColor = [UIColor whiteColor];
+    self.pageControl.pageIndicatorTintColor = [UIColor grayColor];
+    self.pageControl.hidden = YES;
+    [bottomView addSubview:self.pageControl];
+    
+    
+    UIButton *getMoneyBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 12, 30, 20)];
+    [getMoneyBtn setTitle:@"充值" forState:UIControlStateNormal];
+    [getMoneyBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [getMoneyBtn setBackgroundColor:[UIColor purpleColor]];
+    [getMoneyBtn.titleLabel setFont:[UIFont systemFontOfSize:12]];
+    [getMoneyBtn addTarget:self action:@selector(p_ClickGetMoneyBtn) forControlEvents:UIControlEventTouchUpInside];
+    [bottomView addSubview:getMoneyBtn];
+    
+    UIImageView *ccbImage = [[UIImageView alloc] initWithFrame:CGRectMake(CGRectGetMaxX(getMoneyBtn.frame)+5, CGRectGetMinY(getMoneyBtn.frame), 20, 20)];
+    ccbImage.image = [UIImage imageNamed:@"Live_Red_ccb"];
+    [bottomView addSubview:ccbImage];
+    
+    UILabel *moneyLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(ccbImage.frame)+5, CGRectGetMinY(ccbImage.frame), 100, 20)];
+    moneyLabel.text = @"999";
+    moneyLabel.textColor = [UIColor whiteColor];
+    moneyLabel.font = [UIFont systemFontOfSize:13];
+    [bottomView addSubview:moneyLabel];
+    self.moneyLabel = moneyLabel;
+    
     UIButton *sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(self.bottomView.frame.size.width-60, 2, 60, 40)];
     [sendBtn setBackgroundColor:[UIColor orangeColor]];
     [sendBtn setTitle:@"发送" forState:UIControlStateNormal];
@@ -81,16 +109,14 @@ static NSString *cellID = @"JPGiftCollectionViewCell";
     //110*125
     CGFloat itemW = SCREEN_WIDTH/4.0;
     CGFloat itemH = itemW*125/110.0;
-    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
-    layout.scrollDirection = UICollectionViewScrollDirectionVertical;
-    layout.minimumLineSpacing = 0;
-    layout.minimumInteritemSpacing = 0;
-    layout.itemSize = CGSizeMake(itemW, itemH);
+    JPHorizontalLayout *layout = [[JPHorizontalLayout alloc] init];
     
     UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, CGRectGetMinY(bottomView.frame)-1-2*itemH, SCREEN_WIDTH, 2*itemH) collectionViewLayout:layout];
     collectionView.delegate = self;
     collectionView.dataSource = self;
+    collectionView.bounces = NO;
     [collectionView registerClass:[JPGiftCollectionViewCell class] forCellWithReuseIdentifier:cellID];
+    collectionView.pagingEnabled = YES;
     [self addSubview:collectionView];
     self.collectionView = collectionView;
 }
@@ -98,6 +124,10 @@ static NSString *cellID = @"JPGiftCollectionViewCell";
 - (void)setDataArray:(NSArray *)dataArray {
     
     _dataArray = dataArray;
+
+    self.pageControl.numberOfPages = dataArray.count/8+1;
+    self.pageControl.currentPage = 0;
+    self.pageControl.hidden =  !(dataArray.count/8);
     
     [self.collectionView reloadData];
 }
@@ -125,7 +155,7 @@ static NSString *cellID = @"JPGiftCollectionViewCell";
         JPGiftCellModel *model = self.dataArray[indexPath.item];
         model.isSelected = !model.isSelected;
         if ([self.preModel isEqual:model]) {
-            [collectionView reloadItemsAtIndexPaths:@[indexPath]];
+            [collectionView reloadData];
         }else {
             self.preModel.isSelected = NO;
             [collectionView reloadData];
@@ -133,6 +163,12 @@ static NSString *cellID = @"JPGiftCollectionViewCell";
         self.preModel = model;
     }
 
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    
+    CGFloat x = scrollView.contentOffset.x;
+    self.pageControl.currentPage = x/SCREEN_WIDTH+0.5;
 }
 
 #pragma mark -发送
@@ -143,8 +179,8 @@ static NSString *cellID = @"JPGiftCollectionViewCell";
     for (JPGiftCellModel *model in self.dataArray) {
         if (model.isSelected) {
             isBack = YES;
-            if ([self.delegate respondsToSelector:@selector(giftViewDisSendGiftInView:data:)]) {
-                [self.delegate giftViewDisSendGiftInView:self data:model];
+            if ([self.delegate respondsToSelector:@selector(giftViewSendGiftInView:data:)]) {
+                [self.delegate giftViewSendGiftInView:self data:model];
             }
         }
     }
@@ -154,6 +190,15 @@ static NSString *cellID = @"JPGiftCollectionViewCell";
     }
 
 }
+
+#pragma mark -充值
+- (void)p_ClickGetMoneyBtn {
+    
+    if ([self.delegate respondsToSelector:@selector(giftViewGetMoneyInView:)]) {
+        [self.delegate giftViewGetMoneyInView:self];
+    }
+}
+
 
 
 - (void)showGiftView {

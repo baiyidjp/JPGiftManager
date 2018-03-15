@@ -79,13 +79,13 @@
     self.finishModel = giftModel;
     [self.userIconView sd_setImageWithURL:[NSURL URLWithString:giftModel.userIcon] placeholderImage:[UIImage imageNamed:@""]];
     self.userNameLabel.text = giftModel.userName;
-    self.giftNameLabel.text = giftModel.giftName;
+    self.giftNameLabel.text = [NSString stringWithFormat:@"送出了:%@",giftModel.giftName];
     [self.giftImageView sd_setImageWithURL:[NSURL URLWithString:giftModel.giftImage] placeholderImage:[UIImage imageNamed:@""]];
     self.hidden = NO;
     self.showViewFinishBlock = completeBlock;
     NSLog(@"当前展示的礼物--%@",giftModel.giftName);
-    if (self.showViewKeyBlock) {
-        self.showViewKeyBlock(giftModel.giftKey);
+    if (self.showViewKeyBlock && self.currentGiftCount == 0) {
+        self.showViewKeyBlock(giftModel);
     }
     [UIView animateWithDuration:0.3 animations:^{
         self.frame =CGRectMake(0, self.frame.origin.y, self.frame.size.width, self.frame.size.height);

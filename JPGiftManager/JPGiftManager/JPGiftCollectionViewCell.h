@@ -1,5 +1,5 @@
 //
-//  JPGiftCollectionViewCell.h 礼物选择页面
+//  JPGiftCollectionViewCell.h 礼物选择页面--展示礼物测cell
 //  JPGiftManager
 //
 //  Created by Keep丶Dream on 2018/3/13.

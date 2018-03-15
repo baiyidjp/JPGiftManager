@@ -9,9 +9,10 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-typedef void(^completeBlock)(BOOL finished);
-
 @class JPGiftModel;
+typedef void(^completeBlock)(BOOL finished);
+typedef void(^completeShowGifImageBlock)(JPGiftModel *giftModel);
+
 @interface JPGiftShowManager : NSObject
 
 + (instancetype)sharedManager;
@@ -26,9 +27,10 @@ typedef void(^completeBlock)(BOOL finished);
  */
 - (void)showGiftViewWithBackView:(UIView *)backView
                             info:(JPGiftModel *)giftModel
-                   completeBlock:(completeBlock)completeBlock;
+                   completeBlock:(completeBlock)completeBlock
+       completeShowGifImageBlock:(completeShowGifImageBlock)completeShowGifImageBlock;
 
-/// 取消上一次的动画操作
-- (void)cancelOperationWithLastInfo:(JPGiftModel *)giftModel;
+/** showgif */
+@property(nonatomic,copy)completeShowGifImageBlock completeShowGifImageBlock;
 
 @end

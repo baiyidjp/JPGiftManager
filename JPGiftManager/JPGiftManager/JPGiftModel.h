@@ -18,6 +18,8 @@
 @property(nonatomic,copy)NSString *giftName;
 /** giftimage */
 @property(nonatomic,copy)NSString *giftImage;
+/** gift gifimage */
+@property(nonatomic,copy)NSString *giftGifImage;
 /** count */
 @property(nonatomic,assign) NSInteger defaultCount; //0
 /** 发送的数 */

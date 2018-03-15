@@ -11,8 +11,20 @@
 @class JPGiftView,JPGiftCellModel;
 @protocol JPGiftViewDelegate <NSObject>
 
-- (void)giftViewDisSendGiftInView:(JPGiftView *)giftView data:(JPGiftCellModel *)model;
+/**
+ 赠送礼物
 
+ @param giftView 礼物的选择的view
+ @param model 礼物展示的数据
+ */
+- (void)giftViewSendGiftInView:(JPGiftView *)giftView data:(JPGiftCellModel *)model;
+
+/**
+ 充值
+
+ @param giftView view
+ */
+- (void)giftViewGetMoneyInView:(JPGiftView *)giftView;
 @end
 
 
