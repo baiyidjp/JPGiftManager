@@ -31,6 +31,8 @@
 #define Bottom_Margin(margin) ((margin)+HOME_INDICATOR_HEIGHT)
 
 
+static const NSInteger giftMaxNum = 99;
+
 @interface JPGiftShowManager()
 
 /** 队列 */
@@ -103,6 +105,15 @@
             //当前存在操作
             JPGiftOperation *op = [self.operationCache objectForKey:giftModel.giftKey];
             op.giftShowView.giftCount = giftModel.sendCount;
+            
+            //限制一次礼物的连击最大值
+            if (op.giftShowView.currentGiftCount >= giftMaxNum) {
+                //移除操作
+                [self.operationCache removeObjectForKey:giftModel.giftKey];
+                //清空唯一key
+                self.curentGiftKey = @"";
+            }
+
         }else {
             //当前操作已结束 重新创建
             JPGiftOperation *operation = [JPGiftOperation addOperationWithView:self.giftShowView OnView:backView Info:giftModel completeBlock:^(BOOL finished,NSString *giftKey) {
@@ -127,6 +138,15 @@
             //当前存在操作
             JPGiftOperation *op = [self.operationCache objectForKey:giftModel.giftKey];
             op.model.defaultCount += giftModel.sendCount;
+            
+            //限制一次礼物的连击最大值
+            if (op.model.defaultCount >= giftMaxNum) {
+                //移除操作
+                [self.operationCache removeObjectForKey:giftModel.giftKey];
+                //清空唯一key
+                self.curentGiftKey = @"";
+            }
+
         }else {
             
             JPGiftOperation *operation = [JPGiftOperation addOperationWithView:self.giftShowView OnView:backView Info:giftModel completeBlock:^(BOOL finished,NSString *giftKey) {

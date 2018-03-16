@@ -21,9 +21,10 @@ typedef void(^completeShowGifImageBlock)(JPGiftModel *giftModel);
 /**
  送礼物
 
- @param backView 礼物需要展示的父view
+ @param backView 礼物动效展示父view
  @param giftModel 礼物的数据
- @param completeBlock 回调
+ @param completeBlock 展示完毕回调
+ @param completeShowGifImageBlock 第一次展示当前礼物的回调
  */
 - (void)showGiftViewWithBackView:(UIView *)backView
                             info:(JPGiftModel *)giftModel

@@ -47,11 +47,6 @@
     return _gifImageView;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 - (JPGiftView *)giftView{
     
     if (!_giftView) {
