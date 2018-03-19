@@ -19,8 +19,9 @@
 @property(nonatomic,strong) UILabel *giftNameLabel;
 /** money */
 @property(nonatomic,strong) UILabel *moneyLabel;
-/** moneybtn */
-@property(nonatomic,strong) UIButton *moneyBtn;
+/** moneyicon */
+@property(nonatomic,strong) UIImageView *moneyImage;
+
 @end
 
 @implementation JPGiftCollectionViewCell
@@ -42,21 +43,26 @@
     self.bgView.backgroundColor = [UIColor clearColor];
     [self.contentView addSubview:self.bgView];
     
-    self.giftImageView = [[UIImageView alloc] initWithFrame:CGRectMake(self.bounds.size.width*0.25, 10, self.bounds.size.width*0.5, self.bounds.size.width*0.5)];
+    self.giftImageView = [[UIImageView alloc] initWithFrame:CGRectMake((self.bounds.size.width-70)*0.5, 11, 70, 55)];
     [self.contentView addSubview:self.giftImageView];
     
-    self.giftNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.giftImageView.frame)+5, self.bounds.size.width, 16)];
+    self.giftNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.giftImageView.frame), self.bounds.size.width, 16)];
     self.giftNameLabel.text = @"礼物名";
     self.giftNameLabel.textColor = [UIColor whiteColor];
     self.giftNameLabel.textAlignment = NSTextAlignmentCenter;
-    self.giftNameLabel.font = [UIFont systemFontOfSize:15];
+    self.giftNameLabel.font = [UIFont systemFontOfSize:12];
     [self.contentView addSubview:self.giftNameLabel];
-        
-    self.moneyBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.giftNameLabel.frame)+5, self.bounds.size.width, 20)];
-    [self.moneyBtn setTitle:@"0" forState:UIControlStateNormal];
-    [self.moneyBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
-    [self.moneyBtn.titleLabel setFont:[UIFont systemFontOfSize:13]];
-    [self.contentView addSubview:self.moneyBtn];
+    
+    UILabel *moneyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.giftNameLabel.frame), 30, 16)];
+    moneyLabel.textColor = [UIColor whiteColor];
+    moneyLabel.font = [UIFont systemFontOfSize:12];
+    moneyLabel.textAlignment = NSTextAlignmentCenter;
+    self.moneyLabel = moneyLabel;
+    [self.contentView  addSubview:moneyLabel];
+    
+    UIImageView *moneyImage = [[UIImageView alloc] initWithFrame:CGRectMake(CGRectGetMinX(moneyLabel.frame)-4, moneyLabel.frame.origin.y+4, 10, 10)];
+    self.moneyImage = moneyImage;
+    [self.contentView  addSubview:moneyImage];
 }
 
 - (void)setModel:(JPGiftCellModel *)model {
@@ -66,9 +72,18 @@
     self.giftNameLabel.text = model.name;
     self.bgView.backgroundColor = model.isSelected ? [UIColor orangeColor] : [UIColor clearColor];
     BOOL isCcb = [model.cost_type boolValue];
-    [self.moneyBtn setTitle:model.value forState:UIControlStateNormal];
     UIImage *img = [UIImage imageNamed:isCcb ? @"Live_Red_ccb" : @"Cece_live_star_small"];
-    [self.moneyBtn setImage:img forState:UIControlStateNormal];
+    self.moneyImage.image = img;
+    
+    NSString *moneyValue = [NSString stringWithFormat:@"%zd",[model.value integerValue]/100];
+    self.moneyLabel.text = moneyValue;
+    
+    CGSize size = [moneyValue sizeWithAttributes:@{NSFontAttributeName:self.moneyLabel.font}];
+    CGFloat w = size.width+1;
+    CGFloat labelX = (self.contentView.bounds.size.width-w+4+10)*0.5;
+    self.moneyLabel.frame = CGRectMake(labelX, CGRectGetMaxY(self.giftNameLabel.frame), w, 16);
+    CGFloat imageX = CGRectGetMinX(self.moneyLabel.frame)-4-10;
+    self.moneyImage.frame = CGRectMake(imageX, self.moneyLabel.frame.origin.y+4, 10, 10);
 }
 
 @end

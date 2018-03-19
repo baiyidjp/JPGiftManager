@@ -40,38 +40,38 @@
 #pragma mark -设置UI
 - (void)p_SetUI {
     
-    self.bgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width-30-5, 50)];
+    self.bgView = [[UIView alloc] initWithFrame:CGRectMake(10, 0, self.frame.size.width-showGiftView_XNum_W-showGiftView_XNum_L, showGiftView_GiftIcon_H)];
     self.bgView.backgroundColor = [UIColor blackColor];
-    self.bgView.layer.cornerRadius = 25;
+    self.bgView.layer.cornerRadius = showGiftView_GiftIcon_H*0.5;
     [self addSubview:self.bgView];
     
-    self.userIconView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
-    self.userIconView.layer.cornerRadius = 25;
-    self.userIconView.layer.backgroundColor = self.backgroundColor.CGColor;
+    self.userIconView = [[UIImageView alloc] initWithFrame:CGRectMake(CGRectGetMinX(self.bgView.frame)+showGiftView_UserIcon_LT, showGiftView_UserIcon_LT, showGiftView_UserIcon_WH, showGiftView_UserIcon_WH)];
+    self.userIconView.layer.cornerRadius = showGiftView_UserIcon_WH*0.5;
+    self.userIconView.layer.masksToBounds = YES;
     [self addSubview:self.userIconView];
     
-    self.userNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(self.userIconView.frame)+5, 2.5, 100, 20)];
-    self.userNameLabel.text = @"白衣哥哥";
+    self.userNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(self.userIconView.frame)+showGiftView_UserName_L, (showGiftView_GiftIcon_H-2*showGiftView_UserName_H-5)*0.5, showGiftView_UserName_W, showGiftView_UserName_H)];
+    self.userNameLabel.text = @"董江鹏";
     self.userNameLabel.textColor = [UIColor whiteColor];
-    self.userNameLabel.font = [UIFont systemFontOfSize:15];
+    self.userNameLabel.font = [UIFont systemFontOfSize:11];
     [self addSubview:self.userNameLabel];
     
-    self.giftNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(self.userIconView.frame)+5,CGRectGetMaxY(self.userNameLabel.frame)+5, 100, 20)];
-    self.giftNameLabel.text = @"豪华游艇";
-    self.giftNameLabel.textColor = [UIColor orangeColor];
-    self.giftNameLabel.font = [UIFont systemFontOfSize:15];
+    self.giftNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMinX(self.userNameLabel.frame),CGRectGetMaxY(self.userNameLabel.frame)+5, showGiftView_UserName_W*2, showGiftView_UserName_H)];
+    self.giftNameLabel.text = @"礼物";
+    self.giftNameLabel.textColor = [UIColor colorWithRed:255/255.0 green:214/255.0 blue:84/255.0 alpha:1];
+    self.giftNameLabel.font = [UIFont systemFontOfSize:12];
     [self addSubview:self.giftNameLabel];
     
-    self.giftImageView = [[UIImageView alloc] initWithFrame:CGRectMake(CGRectGetMaxX(self.userNameLabel.frame)+5, 0, 50, 50)];
+    self.giftImageView = [[UIImageView alloc] initWithFrame:CGRectMake(CGRectGetMaxX(self.userNameLabel.frame), 0, showGiftView_GiftIcon_W, showGiftView_GiftIcon_H)];
     [self addSubview:self.giftImageView];
     
-    self.countLabel = [[JPGiftCountLabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(self.giftImageView.frame)+5, 10, 50, 30)];
+    self.countLabel = [[JPGiftCountLabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(self.giftImageView.frame)+showGiftView_XNum_L, (showGiftView_GiftIcon_H-showGiftView_XNum_H)*0.5, showGiftView_XNum_W, showGiftView_XNum_H)];
     self.countLabel.textColor = [UIColor whiteColor];
     self.countLabel.font = [UIFont systemFontOfSize:20];
     self.countLabel.textAlignment = NSTextAlignmentCenter;
     self.countLabel.text = @"";
     [self addSubview:self.countLabel];
-    
+
 }
 
 - (void)showGiftShowViewWithModel:(JPGiftModel *)giftModel completeBlock:(completeShowViewBlock)completeBlock{
@@ -79,7 +79,7 @@
     self.finishModel = giftModel;
     [self.userIconView sd_setImageWithURL:[NSURL URLWithString:giftModel.userIcon] placeholderImage:[UIImage imageNamed:@""]];
     self.userNameLabel.text = giftModel.userName;
-    self.giftNameLabel.text = [NSString stringWithFormat:@"送出了:%@",giftModel.giftName];
+    self.giftNameLabel.text = [NSString stringWithFormat:@"送 %@",giftModel.giftName];
     [self.giftImageView sd_setImageWithURL:[NSURL URLWithString:giftModel.giftImage] placeholderImage:[UIImage imageNamed:@""]];
     self.hidden = NO;
     self.showViewFinishBlock = completeBlock;
@@ -94,8 +94,7 @@
         self.currentGiftCount = 0;
         [self setGiftCount:giftModel.defaultCount];
         
-    }];
-}
+    }];}
 
 - (void)hiddenGiftShowView {
     

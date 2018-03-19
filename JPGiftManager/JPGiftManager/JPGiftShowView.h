@@ -14,6 +14,18 @@ typedef void(^completeShowViewBlock)(BOOL finished,NSString *giftKey);
 
 typedef void(^completeShowViewKeyBlock)(JPGiftModel *giftModel);
 
+static const CGFloat showGiftView_UserIcon_WH = 44; //头像宽高
+static const CGFloat showGiftView_UserName_W = 60;//名字宽 -
+static const CGFloat showGiftView_UserName_H = 16;//名字高 -
+static const CGFloat showGiftView_UserName_L = 2;//名字左
+static const CGFloat showGiftView_GiftIcon_H = 50;//图片高
+static const CGFloat showGiftView_GiftIcon_W = showGiftView_GiftIcon_H*(70/55.0);//图片宽
+static const CGFloat showGiftView_UserIcon_LT = (showGiftView_GiftIcon_H-showGiftView_UserIcon_WH)*0.5;//头像距离上/左
+static const CGFloat showGiftView_XNum_W = 50;//礼物数宽
+static const CGFloat showGiftView_XNum_H = 30;//礼物数高
+static const CGFloat showGiftView_XNum_L = 5;//礼物数左
+
+
 @interface JPGiftShowView : UIView
 
 /**

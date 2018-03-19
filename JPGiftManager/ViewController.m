@@ -32,7 +32,6 @@
     NSDictionary *responseObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:nil];
     NSArray *data = [responseObject objectForKey:@"data"];
     NSMutableArray *dataArr = [NSMutableArray arrayWithArray:data];
-    [dataArr addObjectsFromArray:data];
     self.giftView.dataArray = [NSArray yy_modelArrayWithClass:[JPGiftCellModel class] json:dataArr];
     
 }

@@ -63,10 +63,11 @@ static const NSInteger giftMaxNum = 99;
     
     if (!_giftShowView) {
         CGFloat itemW = SCREEN_WIDTH/4.0;
-        CGFloat itemH = itemW*125/110.0;
+        CGFloat itemH = itemW*105/93.8;
         
         __weak typeof(self) weakSelf = self;
-        _giftShowView = [[JPGiftShowView alloc] initWithFrame:CGRectMake(-245, SCREEN_HEIGHT-Bottom_Margin(44)-1-2*itemH-50-5, 245, 50)];
+        CGFloat showViewW = 10+showGiftView_UserIcon_LT+showGiftView_UserIcon_WH+showGiftView_UserName_L+showGiftView_UserName_W+showGiftView_GiftIcon_W+showGiftView_XNum_L+showGiftView_XNum_W;
+        _giftShowView = [[JPGiftShowView alloc] initWithFrame:CGRectMake(-showViewW, SCREEN_HEIGHT-Bottom_Margin(44)-2*itemH-showGiftView_GiftIcon_H-10-15, showViewW, showGiftView_GiftIcon_H)];
         [_giftShowView setShowViewKeyBlock:^(JPGiftModel *giftModel) {
             _curentGiftKey = giftModel.giftKey;
             if (weakSelf.completeShowGifImageBlock) {

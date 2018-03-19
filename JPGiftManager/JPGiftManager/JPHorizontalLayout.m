@@ -36,7 +36,7 @@
     
     
     CGFloat itemW = SCREEN_WIDTH/4.0;
-    CGFloat itemH = itemW*125/110.0;
+    CGFloat itemH = itemW*105/93.8;
     self.itemSize = CGSizeMake(itemW, itemH);
     self.minimumLineSpacing = 0;
     self.minimumInteritemSpacing = 0;
