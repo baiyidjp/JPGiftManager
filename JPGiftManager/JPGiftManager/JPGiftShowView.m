@@ -10,6 +10,8 @@
 #import "JPGiftModel.h"
 #import "UIImageView+WebCache.h"
 
+static const NSInteger animationTime = 5;
+
 @interface JPGiftShowView()
 
 @end
@@ -122,10 +124,10 @@
     if (self.currentGiftCount > 1) {
         [self p_SetAnimation:self.countLabel];
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hiddenGiftShowView) object:nil];//可以取消成功。
-        [self performSelector:@selector(hiddenGiftShowView) withObject:nil afterDelay:2];
+        [self performSelector:@selector(hiddenGiftShowView) withObject:nil afterDelay:animationTime];
         
     }else {
-        [self performSelector:@selector(hiddenGiftShowView) withObject:nil afterDelay:2];
+        [self performSelector:@selector(hiddenGiftShowView) withObject:nil afterDelay:animationTime];
     }
 }
 

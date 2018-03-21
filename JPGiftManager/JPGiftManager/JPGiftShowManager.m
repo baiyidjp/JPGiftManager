@@ -36,47 +36,91 @@ static const NSInteger giftMaxNum = 99;
 @interface JPGiftShowManager()
 
 /** 队列 */
-@property(nonatomic,strong) NSOperationQueue *giftQueue;
+@property(nonatomic,strong) NSOperationQueue *giftQueue1;
+@property(nonatomic,strong) NSOperationQueue *giftQueue2;
 /** showgift */
-@property(nonatomic,strong) JPGiftShowView *giftShowView;
+@property(nonatomic,strong) JPGiftShowView *giftShowView1;
+@property(nonatomic,strong) JPGiftShowView *giftShowView2;
 /** 操作缓存 */
 @property (nonatomic,strong) NSCache *operationCache;
 
 @property(nonatomic,copy) completeBlock finishedBlock;
-/** 当前礼物的key */
-@property(nonatomic,strong) NSString *curentGiftKey;
+/** 当前礼物的keys */
+@property(nonatomic,strong) NSMutableArray *curentGiftKeys;
+
 @end
 
 @implementation JPGiftShowManager
 
-- (NSOperationQueue *)giftQueue{
+- (NSOperationQueue *)giftQueue1{
     
-    if (!_giftQueue) {
+    if (!_giftQueue1) {
         
-        _giftQueue = [[NSOperationQueue alloc] init];
-        _giftQueue.maxConcurrentOperationCount = 1;
+        _giftQueue1 = [[NSOperationQueue alloc] init];
+        _giftQueue1.maxConcurrentOperationCount = 1;
     }
-    return _giftQueue;
+    return _giftQueue1;
 }
 
-- (JPGiftShowView *)giftShowView{
+- (NSOperationQueue *)giftQueue2{
     
-    if (!_giftShowView) {
+    if (!_giftQueue2) {
+        
+        _giftQueue2 = [[NSOperationQueue alloc] init];
+        _giftQueue2.maxConcurrentOperationCount = 1;
+    }
+    return _giftQueue2;
+}
+
+- (NSMutableArray *)curentGiftKeys{
+    
+    if (!_curentGiftKeys) {
+        
+        _curentGiftKeys = [NSMutableArray array];
+    }
+    return _curentGiftKeys;
+}
+
+- (JPGiftShowView *)giftShowView1{
+    
+    if (!_giftShowView1) {
         CGFloat itemW = SCREEN_WIDTH/4.0;
         CGFloat itemH = itemW*105/93.8;
         
         __weak typeof(self) weakSelf = self;
         CGFloat showViewW = 10+showGiftView_UserIcon_LT+showGiftView_UserIcon_WH+showGiftView_UserName_L+showGiftView_UserName_W+showGiftView_GiftIcon_W+showGiftView_XNum_L+showGiftView_XNum_W;
-        _giftShowView = [[JPGiftShowView alloc] initWithFrame:CGRectMake(-showViewW, SCREEN_HEIGHT-Bottom_Margin(44)-2*itemH-showGiftView_GiftIcon_H-10-15, showViewW, showGiftView_GiftIcon_H)];
-        [_giftShowView setShowViewKeyBlock:^(JPGiftModel *giftModel) {
-            _curentGiftKey = giftModel.giftKey;
+        CGFloat showViewY = SCREEN_HEIGHT-Bottom_Margin(44)-2*itemH-showGiftView_GiftIcon_H-10-15;
+        _giftShowView1 = [[JPGiftShowView alloc] initWithFrame:CGRectMake(-showViewW, showViewY, showViewW, showGiftView_GiftIcon_H)];
+        [_giftShowView1 setShowViewKeyBlock:^(JPGiftModel *giftModel) {
+            [weakSelf.curentGiftKeys addObject:giftModel.giftKey];
             if (weakSelf.completeShowGifImageBlock) {
                 weakSelf.completeShowGifImageBlock(giftModel);
             }
         }];
     }
-    return _giftShowView;
+    return _giftShowView1;
 }
+
+- (JPGiftShowView *)giftShowView2 {
+    
+    if (!_giftShowView2) {
+        CGFloat itemW = SCREEN_WIDTH/4.0;
+        CGFloat itemH = itemW*105/93.8;
+        
+        __weak typeof(self) weakSelf = self;
+        CGFloat showViewW = 10+showGiftView_UserIcon_LT+showGiftView_UserIcon_WH+showGiftView_UserName_L+showGiftView_UserName_W+showGiftView_GiftIcon_W+showGiftView_XNum_L+showGiftView_XNum_W;
+        CGFloat showViewY = SCREEN_HEIGHT-Bottom_Margin(44)-2*itemH-showGiftView_GiftIcon_H*2-2*10-15;
+        _giftShowView2 = [[JPGiftShowView alloc] initWithFrame:CGRectMake(-showViewW, showViewY, showViewW, showGiftView_GiftIcon_H)];
+        [_giftShowView2 setShowViewKeyBlock:^(JPGiftModel *giftModel) {
+            [weakSelf.curentGiftKeys addObject:giftModel.giftKey];
+            if (weakSelf.completeShowGifImageBlock) {
+                weakSelf.completeShowGifImageBlock(giftModel);
+            }
+        }];
+    }
+    return _giftShowView2;
+}
+
 
 - (NSCache *)operationCache
 {
@@ -100,7 +144,7 @@ static const NSInteger giftMaxNum = 99;
     
     self.completeShowGifImageBlock = completeShowGifImageBlock;
     
-    if (self.curentGiftKey && [self.curentGiftKey isEqualToString:giftModel.giftKey]) {
+    if (self.curentGiftKeys.count && [self.curentGiftKeys containsObject:giftModel.giftKey]) {
         //有当前的礼物信息
         if ([self.operationCache objectForKey:giftModel.giftKey]) {
             //当前存在操作
@@ -112,25 +156,35 @@ static const NSInteger giftMaxNum = 99;
                 //移除操作
                 [self.operationCache removeObjectForKey:giftModel.giftKey];
                 //清空唯一key
-                self.curentGiftKey = @"";
+                [self.curentGiftKeys removeObject:giftModel.giftKey];
             }
 
         }else {
+            NSOperationQueue *queue;
+            JPGiftShowView *showView;
+            if (self.giftQueue1.operations.count <= self.giftQueue2.operations.count) {
+                queue = self.giftQueue1;
+                showView = self.giftShowView1;
+            }else {
+                queue = self.giftQueue2;
+                showView = self.giftShowView2;
+            }
+
             //当前操作已结束 重新创建
-            JPGiftOperation *operation = [JPGiftOperation addOperationWithView:self.giftShowView OnView:backView Info:giftModel completeBlock:^(BOOL finished,NSString *giftKey) {
+            JPGiftOperation *operation = [JPGiftOperation addOperationWithView:showView OnView:backView Info:giftModel completeBlock:^(BOOL finished,NSString *giftKey) {
                 if (self.finishedBlock) {
                     self.finishedBlock(finished);
                 }
                 //移除操作
                 [self.operationCache removeObjectForKey:giftKey];
                 //清空唯一key
-                self.curentGiftKey = @"";
+                [self.curentGiftKeys removeObject:giftKey];
             }];
             operation.model.defaultCount += giftModel.sendCount;
             //存储操作信息
             [self.operationCache setObject:operation forKey:giftModel.giftKey];
             //操作加入队列
-            [self.giftQueue addOperation:operation];
+            [queue addOperation:operation];
         }
 
     }else {
@@ -145,25 +199,34 @@ static const NSInteger giftMaxNum = 99;
                 //移除操作
                 [self.operationCache removeObjectForKey:giftModel.giftKey];
                 //清空唯一key
-                self.curentGiftKey = @"";
+                [self.curentGiftKeys removeObject:giftModel.giftKey];
             }
 
         }else {
-            
-            JPGiftOperation *operation = [JPGiftOperation addOperationWithView:self.giftShowView OnView:backView Info:giftModel completeBlock:^(BOOL finished,NSString *giftKey) {
+            NSOperationQueue *queue;
+            JPGiftShowView *showView;
+            if (self.giftQueue1.operations.count <= self.giftQueue2.operations.count) {
+                queue = self.giftQueue1;
+                showView = self.giftShowView1;
+            }else {
+                queue = self.giftQueue2;
+                showView = self.giftShowView2;
+            }
+
+            JPGiftOperation *operation = [JPGiftOperation addOperationWithView:showView OnView:backView Info:giftModel completeBlock:^(BOOL finished,NSString *giftKey) {
                 if (self.finishedBlock) {
                     self.finishedBlock(finished);
                 }
                 //移除操作
                 [self.operationCache removeObjectForKey:giftKey];
                 //清空唯一key
-                self.curentGiftKey = @"";
+                [self.curentGiftKeys removeObject:giftKey];
             }];
             operation.model.defaultCount += giftModel.sendCount;
             //存储操作信息
             [self.operationCache setObject:operation forKey:giftModel.giftKey];
             //操作加入队列
-            [self.giftQueue addOperation:operation];
+            [queue addOperation:operation];
         }
     }
 }

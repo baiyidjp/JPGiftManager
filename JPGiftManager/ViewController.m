@@ -40,7 +40,7 @@
     
     if (!_gifImageView) {
         
-        _gifImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 100, 360, 225)];
+        _gifImageView = [[UIImageView alloc] initWithFrame:CGRectMake(7.5, 0, 360, 225)];
         _gifImageView.hidden = YES;
     }
     return _gifImageView;
