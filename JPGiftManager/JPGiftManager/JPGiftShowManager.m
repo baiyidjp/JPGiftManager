@@ -140,6 +140,11 @@ static const NSInteger giftMaxNum = 99;
     return manager;
 }
 
+- (void)showGiftViewWithBackView:(UIView *)backView info:(JPGiftModel *)giftModel completeBlock:(completeBlock)completeBlock {
+    
+    [self showGiftViewWithBackView:backView info:giftModel completeBlock:completeBlock completeShowGifImageBlock:nil];
+}
+
 - (void)showGiftViewWithBackView:(UIView *)backView info:(JPGiftModel *)giftModel completeBlock:(completeBlock)completeBlock completeShowGifImageBlock:(completeShowGifImageBlock)completeShowGifImageBlock {
     
     self.completeShowGifImageBlock = completeShowGifImageBlock;

@@ -29,17 +29,43 @@
                                     <action selector="clickGift:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7rO-6p-iBL"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qtv-zM-zhX">
+                                <rect key="frame" x="127.5" y="509" width="119" height="34"/>
+                                <state key="normal" title="点我改变(NO)">
+                                    <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <state key="selected" title="点我改变(YES)">
+                                    <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="changeGifType:" destination="BYZ-38-t0r" eventType="touchUpInside" id="VE3-js-E0Y"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="是否展示gif图" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sEc-SW-qdV">
+                                <rect key="frame" x="134" y="468" width="107" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Qtv-zM-zhX" secondAttribute="bottom" constant="124" id="2Wj-0S-vGo"/>
+                            <constraint firstItem="Qtv-zM-zhX" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="7EF-44-Veb"/>
                             <constraint firstItem="ag5-M5-IYE" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="81Z-bn-F4s"/>
                             <constraint firstItem="ag5-M5-IYE" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="ONF-FB-71t"/>
+                            <constraint firstItem="Qtv-zM-zhX" firstAttribute="top" secondItem="sEc-SW-qdV" secondAttribute="bottom" constant="20" id="Xdr-aG-RtP"/>
+                            <constraint firstItem="sEc-SW-qdV" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="fDG-RT-sEC"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <connections>
+                        <outlet property="changeBtn" destination="Qtv-zM-zhX" id="nLf-rC-OnX"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="136.80000000000001" y="102.99850074962519"/>
         </scene>
     </scenes>
 </document>

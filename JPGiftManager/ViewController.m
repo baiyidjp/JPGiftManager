@@ -19,6 +19,8 @@
 @property(nonatomic,strong) JPGiftView *giftView;
 /** gifimage */
 @property(nonatomic,strong) UIImageView *gifImageView;
+@property (weak, nonatomic) IBOutlet UIButton *changeBtn;
+
 @end
 
 @implementation ViewController
@@ -60,6 +62,10 @@
     
     [self.giftView showGiftView];
 }
+- (IBAction)changeGifType:(id)sender {
+    
+    self.changeBtn.selected = !self.changeBtn.selected;
+}
 
 - (void)giftViewSendGiftInView:(JPGiftView *)giftView data:(JPGiftCellModel *)model {
     
@@ -73,24 +79,35 @@
     giftModel.giftId = model.id;
     giftModel.defaultCount = 0;
     giftModel.sendCount = 1;
-    [[JPGiftShowManager sharedManager] showGiftViewWithBackView:self.view info:giftModel completeBlock:^(BOOL finished) {
-        //结束
-    } completeShowGifImageBlock:^(JPGiftModel *giftModel) {
-        //展示gifimage
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            UIWindow *window = [UIApplication sharedApplication].keyWindow;
-            [window addSubview:self.gifImageView];
-            [self.gifImageView sd_setImageWithURL:[NSURL URLWithString:giftModel.giftGifImage]];
-            self.gifImageView.hidden = NO;
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                self.gifImageView.hidden = YES;
-                [self.gifImageView sd_setImageWithURL:[NSURL URLWithString:@""]];
-                [self.gifImageView removeFromSuperview];
+    
+    if (self.changeBtn.selected) {
+        
+        [[JPGiftShowManager sharedManager] showGiftViewWithBackView:self.view info:giftModel completeBlock:^(BOOL finished) {
+            //结束
+        } completeShowGifImageBlock:^(JPGiftModel *giftModel) {
+            //展示gifimage
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                UIWindow *window = [UIApplication sharedApplication].keyWindow;
+                [window addSubview:self.gifImageView];
+                [self.gifImageView sd_setImageWithURL:[NSURL URLWithString:giftModel.giftGifImage]];
+                self.gifImageView.hidden = NO;
+                
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    self.gifImageView.hidden = YES;
+                    [self.gifImageView sd_setImageWithURL:[NSURL URLWithString:@""]];
+                    [self.gifImageView removeFromSuperview];
+                });
             });
-        });
-    }];
+        }];
+    }else {
+        
+        [[JPGiftShowManager sharedManager] showGiftViewWithBackView:self.view info:giftModel completeBlock:^(BOOL finished) {
+            //结束
+            }
+        ];
+
+    }
 }
 
 
