@@ -158,7 +158,10 @@ static NSString *cellID = @"JPGiftCollectionViewCell";
             [collectionView reloadData];
         }else {
             self.preModel.isSelected = NO;
-            [collectionView reloadData];
+            [UIView performWithoutAnimation:^{
+                [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
+            }];
+
         }
         self.preModel = model;
     }
