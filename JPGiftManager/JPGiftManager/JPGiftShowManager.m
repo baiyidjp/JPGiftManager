@@ -47,6 +47,8 @@ static const NSInteger giftMaxNum = 99;
 @property(nonatomic,copy) completeBlock finishedBlock;
 /** 当前礼物的keys */
 @property(nonatomic,strong) NSMutableArray *curentGiftKeys;
+/** showgif */
+@property(nonatomic,copy)completeShowGifImageBlock completeShowGifImageBlock;
 
 @end
 

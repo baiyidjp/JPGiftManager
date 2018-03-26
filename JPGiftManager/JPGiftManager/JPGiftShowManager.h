@@ -35,14 +35,11 @@ typedef void(^completeShowGifImageBlock)(JPGiftModel *giftModel);
  @param backView 礼物动效展示父view
  @param giftModel 礼物的数据
  @param completeBlock 展示完毕回调
- @param completeShowGifImageBlock 第一次展示当前礼物的回调
+ @param completeShowGifImageBlock 第一次展示当前礼物的回调(为了显示gif)
  */
 - (void)showGiftViewWithBackView:(UIView *)backView
                             info:(JPGiftModel *)giftModel
                    completeBlock:(completeBlock)completeBlock
        completeShowGifImageBlock:(completeShowGifImageBlock)completeShowGifImageBlock;
-
-/** showgif */
-@property(nonatomic,copy)completeShowGifImageBlock completeShowGifImageBlock;
 
 @end

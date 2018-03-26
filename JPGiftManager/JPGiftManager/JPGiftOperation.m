@@ -10,13 +10,6 @@
 #import "JPGiftShowView.h"
 #import "JPGiftModel.h"
 
-@interface JPGiftOperation()
-
-@property (nonatomic, getter = isFinished)  BOOL finished;
-@property (nonatomic, getter = isExecuting) BOOL executing;
-
-
-@end
 
 @implementation JPGiftOperation
 
