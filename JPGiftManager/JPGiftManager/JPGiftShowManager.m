@@ -154,19 +154,22 @@ static const NSInteger giftMaxNum = 99;
     if (self.curentGiftKeys.count && [self.curentGiftKeys containsObject:giftModel.giftKey]) {
         //有当前的礼物信息
         if ([self.operationCache objectForKey:giftModel.giftKey]) {
+            
             //当前存在操作
             JPGiftOperation *op = [self.operationCache objectForKey:giftModel.giftKey];
-            op.giftShowView.giftCount = giftModel.sendCount;
-            
             //限制一次礼物的连击最大值
             if (op.giftShowView.currentGiftCount >= giftMaxNum) {
                 //移除操作
                 [self.operationCache removeObjectForKey:giftModel.giftKey];
                 //清空唯一key
                 [self.curentGiftKeys removeObject:giftModel.giftKey];
+            }else {
+                //赋值当前礼物数
+                op.giftShowView.giftCount = giftModel.sendCount;
             }
 
         }else {
+            
             NSOperationQueue *queue;
             JPGiftShowView *showView;
             if (self.giftQueue1.operations.count <= self.giftQueue2.operations.count) {
@@ -197,19 +200,22 @@ static const NSInteger giftMaxNum = 99;
     }else {
         //没有礼物的信息
         if ([self.operationCache objectForKey:giftModel.giftKey]) {
+            
             //当前存在操作
             JPGiftOperation *op = [self.operationCache objectForKey:giftModel.giftKey];
-            op.model.defaultCount += giftModel.sendCount;
-            
             //限制一次礼物的连击最大值
             if (op.model.defaultCount >= giftMaxNum) {
                 //移除操作
                 [self.operationCache removeObjectForKey:giftModel.giftKey];
                 //清空唯一key
                 [self.curentGiftKeys removeObject:giftModel.giftKey];
+            }else {
+                //赋值当前礼物数
+                op.model.defaultCount += giftModel.sendCount;
             }
 
         }else {
+            
             NSOperationQueue *queue;
             JPGiftShowView *showView;
             if (self.giftQueue1.operations.count <= self.giftQueue2.operations.count) {
@@ -223,6 +229,9 @@ static const NSInteger giftMaxNum = 99;
             JPGiftOperation *operation = [JPGiftOperation addOperationWithView:showView OnView:backView Info:giftModel completeBlock:^(BOOL finished,NSString *giftKey) {
                 if (self.finishedBlock) {
                     self.finishedBlock(finished);
+                }
+                if ([giftModel.giftKey isEqualToString:giftKey]) {
+                    return ;
                 }
                 //移除操作
                 [self.operationCache removeObjectForKey:giftKey];
