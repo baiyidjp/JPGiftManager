@@ -65,5 +65,4 @@ static const CGFloat showGiftView_XNum_L = 5;//礼物数左
 /** model */
 @property(nonatomic,strong) JPGiftModel *finishModel;
 
-
 @end

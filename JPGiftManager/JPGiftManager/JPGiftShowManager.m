@@ -230,7 +230,7 @@ static const NSInteger giftMaxNum = 99;
                 if (self.finishedBlock) {
                     self.finishedBlock(finished);
                 }
-                if ([giftModel.giftKey isEqualToString:giftKey]) {
+                if ([self.giftShowView1.finishModel.giftKey isEqualToString:self.giftShowView2.finishModel.giftKey]) {
                     return ;
                 }
                 //移除操作

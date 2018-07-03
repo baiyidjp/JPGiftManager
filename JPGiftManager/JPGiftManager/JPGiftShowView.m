@@ -106,6 +106,7 @@ static const NSInteger animationTime = 5;
         
         if (self.showViewFinishBlock) {
             self.showViewFinishBlock(YES, self.finishModel.giftKey);
+            self.finishModel = nil;
         }
         self.frame =CGRectMake(-self.frame.size.width, self.frame.origin.y+50, self.frame.size.width, self.frame.size.height);
 
