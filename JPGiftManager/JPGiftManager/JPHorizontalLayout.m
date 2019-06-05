@@ -66,7 +66,7 @@
 - (CGSize)collectionViewContentSize{
     
     NSInteger cellCount = [self.collectionView numberOfItemsInSection:0];
-    NSInteger page = cellCount / 8 + 1;
+    NSInteger page = (cellCount-1) / 8 + 1;
     return CGSizeMake(SCREEN_WIDTH*page, 0);
 }
 
