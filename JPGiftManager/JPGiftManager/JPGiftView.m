@@ -125,9 +125,9 @@ static NSString *cellID = @"JPGiftCollectionViewCell";
     
     _dataArray = dataArray;
 
-    self.pageControl.numberOfPages = dataArray.count/8+1;
+    self.pageControl.numberOfPages = (dataArray.count-1)/8+1;
     self.pageControl.currentPage = 0;
-    self.pageControl.hidden =  !(dataArray.count/8);
+    self.pageControl.hidden =  !((dataArray.count-1)/8);
     
     [self.collectionView reloadData];
 }
