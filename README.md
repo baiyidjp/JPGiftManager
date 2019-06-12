@@ -51,4 +51,3 @@
        completeShowGifImageBlock:(completeShowGifImageBlock)completeShowGifImageBlock;
 
 ```
-- 等过段时间有时间会将实现过程记录下来.你会等我么?
